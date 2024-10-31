@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+    }
+    .sidebar {
+      min-width: 200px;
+      background-color: #343a40;
+      height: 100vh;
+      padding-top: 20px;
+    }
+    .sidebar .nav-link {
+      color: #fff;
+    }
+    .sidebar .nav-link:hover {
+      cursor: pointer;
+      background-color: #495057;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+    }
+    .active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar Navigation -->
+<div class="sidebar">
+  <h3 class="text-white text-center">ABC POS</h3>
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <span id="dashboard-nav" class="nav-link active">Dashboard</span>
+    </li>
+    <li class="nav-item">
+      <span id="customer-nav" class="nav-link">Customer Management</span>
+    </li>
+    <li class="nav-item">
+      <span id="item-nav" class="nav-link">Item Management</span>
+    </li>
+    <li class="nav-item">
+      <span id="order-nav" class="nav-link">Place Order</span>
+    </li>
+    <li class="nav-item">
+      <span id="order-history-nav" class="nav-link">Order History</span>
+    </li>
+  </ul>
+</div>
+
+
+<div class="content">
+  <!-- Dashboard Cards -->
+  <div id="dashboard-section" class="container mt-4">
+    <h2 class="text-center mb-4">Dashboard Overview</h2>
+    <div class="row">
+      
+      <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Customers</h5>
+            <p class="card-text fs-2" id="customerCount">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3">
+        <div class="card text-white bg-info">
+          <div class="card-body">
+            <h5 class="card-title">Items</h5>
+            <p class="card-text fs-2" id="itemCount">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3">
+        <div class="card text-white bg-warning">
+          <div class="card-body">
+            <h5 class="card-title">Orders</h5>
+            <p class="card-text fs-2" id="orderCount">0</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3">
+        <div class="card text-white bg-danger mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Total Revenue</h5>
+            <p class="card-text fs-2" id="totalRevenue">$0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div id="customer-section" class="container mt-5" style="display: none;">
+    <div class="card my-4">
+      <div class="card-header">Enter Customer Details</div>
+      <div class="card-body">
+        <form id="customerForm">
+          <div class="row mb-3">
+            <div class="col">
+              <label for="firstName" class="form-label">First Name</label>
+              <input type="text" class="form-control" id="firstName" required>
+            </div>
+            <div class="col">
+              <label for="lastName" class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="lastName" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="mobile" class="form-label">Mobile Number</label>
+              <input type="text" class="form-control" id="mobile" required>
+            </div>
+            <div class="col">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <textarea class="form-control" id="address" rows="3" required></textarea>
+          </div>
+          <div class="d-flex">
+            <button id="customer_add_btn" type="button" class="btn btn-primary me-2">Add Customer</button>
+            <button id="customer_update_btn" type="button" class="btn btn-info" disabled>Update Customer</button>
+            <button id="customer_delete_btn" type="button" class="btn btn-danger" disabled>Delete Customer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <h3 class="mt-5">Customer List</h3>
+    <table class="table table-bordered table-striped mt-3">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Mobile Number</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="customerTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Item Section -->
+  <div id="item-section" class="container mt-5" style="display: none;">
+    <div class="card my-4">
+      <div class="card-header">Enter Item Details</div>
+      <div class="card-body">
+        <form id="itemForm">
+          <div class="row mb-3">
+            <div class="col">
+              <label for="itemName" class="form-label">Item Name</label>
+              <input type="text" class="form-control" id="itemName" required>
+            </div>
+            <div class="col">
+              <label for="qty" class="form-label">Quantity</label>
+              <input type="number" class="form-control" id="qty" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="itemDescription" class="form-label">Item Description</label>
+            <textarea class="form-control" id="itemDescription" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" class="form-control" id="price" required>
+          </div>
+          <div class="d-flex">
+            <button id="item_add_btn" type="button" class="btn btn-primary me-2">Add Item</button>
+            <button id="item_update_btn" type="button" class="btn btn-info" disabled>Update Item</button>
+            <button id="item_delete_btn" type="button" class="btn btn-danger" disabled>Delete Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <h3 class="mt-5">Item List</h3>
+    <table class="table table-bordered table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Item Name</th>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="itemTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Order Section -->
+  <div id="order-section" class="container mt-5" style="display: none;">
+    <div class="card my-4">
+      <div class="card-body">
+        <form id="orderForm">
+          <div class="mb-3">
+            <label for="customerSelect" class="form-label">Select Customer</label>
+            <select class="form-select" id="customerSelect" required>
+              <option value="" disabled selected>Select a Customer</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="itemSelect" class="form-label">Select Item</label>
+            <select class="form-select" id="itemSelect" required>
+              <option value="" disabled selected>Select an Item</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="orderQty" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="orderQty" required>
+          </div>
+          <div class="d-flex">
+            <button id="place_order_btn" type="button" class="btn btn-primary me-2">Place Order</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <h3 class="mt-5">Order History</h3>
+    <table class="table table-bordered table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Total Price</th>
+        </tr>
+      </thead>
+      <tbody id="orderTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  $(document).ready(function() {
+    let customers = [];
+    let items = [];
+    let orders = [];
+
+    
+    $('#dashboard-nav').click(() => showSection('dashboard'));
+    $('#customer-nav').click(() => showSection('customer'));
+    $('#item-nav').click(() => showSection('item'));
+    $('#order-nav').click(() => showSection('order'));
+    $('#order-history-nav').click(() => showSection('orderHistory'));
+
+    
+    function showSection(section) {
+      $('.content > div').hide();
+      if (section === 'dashboard') {
+        $('#dashboard-section').show();
+        updateDashboard();
+      } else if (section === 'customer') {
+        $('#customer-section').show();
+        loadCustomers();
+      } else if (section === 'item') {
+        $('#item-section').show();
+        loadItems();
+      } else if (section === 'order') {
+        $('#order-section').show();
+        loadCustomers();
+        loadItems();
+      }
+    }
+
+    // Customer Management
+    $('#customer_add_btn').click(function() {
+      const customer = {
+        firstName: $('#firstName').val(),
+        lastName: $('#lastName').val(),
+        mobile: $('#mobile').val(),
+        email: $('#email').val(),
+        address: $('#address').val()
+      };
+      customers.push(customer);
+      loadCustomers();
+      $('#customerForm')[0].reset();
+    });
+
+    function loadCustomers() {
+      $('#customerTableBody').empty();
+      customers.forEach((customer, index) => {
+        $('#customerTableBody').append(`
+          <tr>
+            <td>${customer.firstName}</td>
+            <td>${customer.lastName}</td>
+            <td>${customer.mobile}</td>
+            <td>${customer.email}</td>
+            <td>${customer.address}</td>
+            <td>
+              <button class="btn btn-info btn-sm" onclick="editCustomer(${index})">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteCustomer(${index})">Delete</button>
+            </td>
+          </tr>
+        `);
+      });
+    }
+
+    window.editCustomer = function(index) {
+      const customer = customers[index];
+      $('#firstName').val(customer.firstName);
+      $('#lastName').val(customer.lastName);
+      $('#mobile').val(customer.mobile);
+      $('#email').val(customer.email);
+      $('#address').val(customer.address);
+      $('#customer_update_btn').prop('disabled', false).off('click').on('click', function() {
+        updateCustomer(index);
+      });
+      $('#customer_delete_btn').prop('disabled', false).off('click').on('click', function() {
+        deleteCustomer(index);
+      });
+    };
+
+    function updateCustomer(index) {
+      customers[index] = {
+        firstName: $('#firstName').val(),
+        lastName: $('#lastName').val(),
+        mobile: $('#mobile').val(),
+        email: $('#email').val(),
+        address: $('#address').val()
+      };
+      loadCustomers();
+      $('#customerForm')[0].reset();
+      $('#customer_update_btn').prop('disabled', true);
+      $('#customer_delete_btn').prop('disabled', true);
+    }
+
+    function deleteCustomer(index) {
+      customers.splice(index, 1);
+      loadCustomers();
+      $('#customer_update_btn').prop('disabled', true);
+      $('#customer_delete_btn').prop('disabled', true);
+    }
+
+    //Item Management
+    $('#item_add_btn').click(function() {
+      const item = {
+        name: $('#itemName').val(),
+        quantity: $('#qty').val(),
+        description: $('#itemDescription').val(),
+        price: $('#price').val()
+      };
+      items.push(item);
+      loadItems();
+      $('#itemForm')[0].reset();
+    });
+
+    function loadItems() {
+      $('#itemTableBody').empty();
+      items.forEach((item, index) => {
+        $('#itemTableBody').append(`
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.description}</td>
+            <td>${item.quantity}</td>
+            <td>${item.price}</td>
+            <td>
+              <button class="btn btn-info btn-sm" onclick="editItem(${index})">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteItem(${index})">Delete</button>
+            </td>
+          </tr>
+        `);
+      });
+    }
+
+    window.editItem = function(index) {
+      const item = items[index];
+      $('#itemName').val(item.name);
+      $('#qty').val(item.quantity);
+      $('#itemDescription').val(item.description);
+      $('#price').val(item.price);
+      $('#item_update_btn').prop('disabled', false).off('click').on('click', function() {
+        updateItem(index);
+      });
+      $('#item_delete_btn').prop('disabled', false).off('click').on('click', function() {
+        deleteItem(index);
+      });
+    };
+
+    function updateItem(index) {
+      items[index] = {
+        name: $('#itemName').val(),
+        quantity: $('#qty').val(),
+        description: $('#itemDescription').val(),
+        price: $('#price').val()
+      };
+      loadItems();
+      $('#itemForm')[0].reset();
+      $('#item_update_btn').prop('disabled', true);
+      $('#item_delete_btn').prop('disabled', true);
+    }
+
+    function deleteItem(index) {
+      items.splice(index, 1);
+      loadItems();
+      $('#item_update_btn').prop('disabled', true);
+      $('#item_delete_btn').prop('disabled', true);
+    }
+
+    //Order Management
+    $('#place_order_btn').click(function() {
+      const order = {
+        customer: $('#customerSelect').val(),
+        item: $('#itemSelect').val(),
+        quantity: $('#orderQty').val()
+      };
+      const customer = customers.find(c => c.mobile === order.customer);
+      const item = items.find(i => i.name === order.item);
+      const totalPrice = item.price * order.quantity;
+      orders.push({ customer: customer.firstName + ' ' + customer.lastName, item: item.name, quantity: order.quantity, totalPrice });
+      loadOrders();
+      $('#orderForm')[0].reset();
+    });
+
+    function loadOrders() {
+      $('#orderTableBody').empty();
+      orders.forEach(order => {
+        $('#orderTableBody').append(`
+          <tr>
+            <td>${order.customer}</td>
+            <td>${order.item}</td>
+            <td>${order.quantity}</td>
+            <td>${order.totalPrice}</td>
+          </tr>
+        `);
+      });
+    }
+
+    // Update dashboard counts
+    function updateDashboard() {
+      $('#customerCount').text(customers.length);
+      $('#itemCount').text(items.length);
+      $('#orderCount').text(orders.length);
+      const totalRevenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+      $('#totalRevenue').text('$' + totalRevenue);
+    }
+  });
+
+  
+</script>
+
+</body>
+</html>
